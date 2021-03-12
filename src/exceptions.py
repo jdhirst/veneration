@@ -1,6 +1,6 @@
 import types
 
-from reverence.carbon.common.script.net.GPSExceptions import *
+from veneration.carbon.common.script.net.GPSExceptions import *
 
 class UserError(Exception):
 	__guid__ = 'exceptions.UserError'

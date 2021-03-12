@@ -9,7 +9,7 @@ included with the distribution).
 Parts of code inspired by or based on EVE Online, with permission from CCP.
 """
 
-from reverence.carbon.common.script.sys.row import Row
+from veneration.carbon.common.script.sys.row import Row
 
 _get = Row.__getattr__
 

@@ -20,7 +20,7 @@ from . import pyFSD
 from . import discover
 from . import rescache
 
-from reverence.carbon.common.lib.utillib import KeyVal
+from veneration.carbon.common.lib.utillib import KeyVal
 
 def set_user_agent(useragent):
 	rescache._useragent = useragent
@@ -60,7 +60,7 @@ __all__ = ["EVE", "marshal", "os", "pyos", "DBRow", "DBRowDescriptor"]
 
 
 # Little hack to have our exceptions look pretty when raised; instead of
-#   "reverence.blue.marshal.UnmarshalError: not enough kittens!"
+#   "veneration.blue.marshal.UnmarshalError: not enough kittens!"
 # it will look like
 #   "UnmarshalError: not enough kittens!"
 # Yes I know this is naughty, but EVE presents them like this as well ;)
@@ -277,7 +277,7 @@ marshal._set_debug_func(_debug)
 _readstringstable()
 
 # hack to make CCP zip libs accept our not-exactly-the-same environment
-sys.modules["blue"] = sys.modules["reverence.blue"]
+sys.modules["blue"] = sys.modules["veneration.blue"]
 
 # and this one to make CCP's FSD loader import pyFSD succesfully
 sys.modules["pyFSD"] = pyFSD

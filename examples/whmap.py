@@ -5,7 +5,7 @@
 #
 # Requires:
 # - Python Imaging Library
-# - Reverence
+# - Veneration
 #
 # This map render script is freeware. Do whatever you want with it
 #
@@ -36,7 +36,7 @@ print(mapWidth, mapHeight)
 
 #-----------------------------------------------------------------------------
 from PIL import Image, ImageDraw, ImageFont
-from reverence import blue, const
+from veneration import blue, const
 
 import time
 

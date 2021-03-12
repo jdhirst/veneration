@@ -33,7 +33,7 @@ def GetCacheFileName(key):
 	# CCP is relying on pickle to produce consistent output, which it does
 	# not because pickle's output depends on the refcount of objects; an
 	# object referenced only once will not get memoized. Cache keys are
-	# seemingly always created by EVE with refcounts >1. When Reverence
+	# seemingly always created by EVE with refcounts >1. When Veneration
 	# decodes them, they only have a refcount of 1. This code ensures that
 	# those refcounts are increased so cPickle produces the correct output
 	# when you feed a decoded object's key to this function.

@@ -9,7 +9,7 @@ Parts of code inspired by or based on EVE Online, with permission from CCP.
 
 import types
 
-from reverence import _blue as blue
+from veneration import _blue as blue
 
 class GPSException(Exception):
 	__guid__ = 'exceptions.GPSException'

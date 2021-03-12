@@ -26,11 +26,11 @@ import itertools
 try:
 	import yaml
 except ImportError:
-	raise RuntimeError("Reverence requires the PyYAML library")
+	raise RuntimeError("Veneration requires the PyYAML library")
 
 from . import pyFSD
 
-from reverence import _pyFSD
+from veneration import _pyFSD
 _uint32 = _pyFSD._uint32_from  # used for decoding in the various containers
 _make_offsets_table = _pyFSD._make_offsets_table
 _unpack_from = struct.unpack_from

@@ -1,15 +1,15 @@
-Reverence-py3 - REVERse ENgineered Cache Explorer
+Veneration
             
-This is an updated version of the original Reverence tool developed by Jamie van den Berge. All credits go to the original author.
+This is an updated version of the original Revenance [REVERse ENgineered Cache Explorer] tool developed by Jamie van den Berge. All credits go to the original author.
 
 The reason for this project is to provide Python3 and modern Wine compatibility to allow this tool to function correctly on modern systems.
 
-Reverence is an advanced EVE Online cache/bulkdata handling toolkit for Python.
+Veneration is an advanced EVE Online cache/bulkdata handling toolkit for Python.
 
 
 LICENSE
 =======
-Reverence is distributed under the terms of the BSD license
+Veneration is distributed under the terms of the BSD license
 (see the file LICENSE.txt included with the distribution).
 
 FEATURES
@@ -74,7 +74,7 @@ Most of the stuff that matters has docstrings.
 
 Using the toolkit is fairly easy, here is an example:
 
-    >>> from reverence import blue
+    >>> from veneration import blue
     >>> eve = blue.EVE(pathToEVE)
     >>> cfg = eve.getconfigmgr()
 
@@ -210,7 +210,7 @@ more friendly manner:
     >>> data = eve.readstuff("path goes here")
 
 
-Reverence can use CCP's Download on Demand servers to acquire files in the
+Veneration can use CCP's Download on Demand servers to acquire files in the
 shared resource cache automatically if missing. To make use of this system,
 you must provide a valid User-Agent and set the shared cache folder to a
 specific location (Do not use EVE's SharedCache location in this case as it

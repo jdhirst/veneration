@@ -9,5 +9,5 @@ it under the terms of the BSD license (see the file LICENSE.txt
 included with the distribution).
 """
 
-from reverence import _pyFSD
+from veneration import _pyFSD
 FsdUnsignedIntegerKeyMap = _pyFSD.FsdUnsignedIntegerKeyMap

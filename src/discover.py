@@ -54,7 +54,7 @@ class _Paths(object):
 
 		root = os.path.abspath(root)
 
-		# below are EVE paths used by Reverence and an example location
+		# below are EVE paths used by Veneration and an example location
 
 		# EVE installation root
 		# - G:\EVE
@@ -99,7 +99,7 @@ class _Paths(object):
 		# returns discovered or specified machonet protocol version.
 
 		# Check EVE root for sharedcache and cache folders:
-		# This provides a way to run reverence on a host that does not have
+		# This provides a way to run veneration on a host that does not have
 		# a proper EVE install by just making sure the right folder/file
 		# hierarchy is present in the specified installation folder.
 		if self.cache is None:
@@ -129,7 +129,7 @@ class _Paths(object):
 		self.bulkdata = os.path.join(self.root, 'bulkdata')
 
 
-		# cache is optional for Reverence, it does not require this
+		# cache is optional for Veneration, it does not require this
 		# path unless eve.RemoteSvc() calls are used or access to settings is
 		# needed.
 		if self.cache is not None:

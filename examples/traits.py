@@ -12,7 +12,7 @@
 EVEROOT = "G:/EVE"  # change me.
 
 import re
-from reverence import blue
+from veneration import blue
 
 tags = re.compile("\<.+?\>")
 

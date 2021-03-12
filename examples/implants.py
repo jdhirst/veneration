@@ -10,7 +10,7 @@ evePath = "E:/EVE"
 
 import sys
 
-from reverence import blue, const
+from veneration import blue, const
 from collections import defaultdict
 
 eve = blue.EVE(evePath)

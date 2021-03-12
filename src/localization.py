@@ -167,7 +167,7 @@ class Localization(object):
 		return self.GetByMessageID(messageID, languageID, **kwarg)
 
 
-	# The special handling of important names in EVE isn't necessary for Reverence.
+	# The special handling of important names in EVE isn't necessary for Veneration.
 	GetImportantByMessageID = GetByMessageID
 	GetImportantByLabel = GetByLabel
 

@@ -10,9 +10,9 @@ Part of this code is inspired by or based on EVE Online.
 Used with permission from CCP.
 """
 
-from reverence import _blue as blue
+from veneration import _blue as blue
 
-from reverence.carbon.common.script.sys.row import Row
+from veneration.carbon.common.script.sys.row import Row
 
 def RowsInit(rows, columns):
 	header = None
