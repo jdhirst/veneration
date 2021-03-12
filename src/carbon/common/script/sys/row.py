@@ -33,21 +33,21 @@ class Row:
 	def __str__(self):
 		if self.__class__ is Row:
 			# bare row class, use shortcut
-			return "Row(" + ','.join(map(lambda k, v: "%s:%s" % (unicode(k), unicode(v)), self.header, self.line)) + ")"
+			return "Row(" + ','.join(map(lambda k, v: "%s:%s" % (str(k), str(v)), self.header, self.line)) + ")"
 		else:
 			# assume it has custom attribute handling (e.g. invtypes)
-			return "Row(" + ','.join(map(lambda k, v: "%s:%s" % (unicode(k), unicode(v)), self.header, map(self.__getattr__, self.header))) + ")"
+			return "Row(" + ','.join(map(lambda k, v: "%s:%s" % (str(k), str(v)), self.header, list(map(self.__getattr__, self.header)))) + ")"
 
 	__repr__ = __str__
 
-	def __nonzero__(self):
+	def __bool__(self):
 		return True
 
 	def __getattr__(self, this):
 		try:
 			return self.line[self.header.index(this)]
 		except ValueError:
-			raise AttributeError, this
+			raise AttributeError(this)
 
 	def __getitem__(self, this):
 		return self.line[self.header.index(this)]

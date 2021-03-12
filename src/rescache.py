@@ -11,7 +11,7 @@ included with the distribution).
 
 import csv
 import os.path
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import zlib
 import hashlib
 
@@ -74,8 +74,8 @@ class ResourceCache(object):
 		# now try all download servers.
 		for server in _DOWNLOAD_SERVERS:
 			try:
-				req = urllib2.Request(server+resPath, None, headers={"User-Agent": _useragent})
-				response = urllib2.urlopen(req)
+				req = urllib.request.Request(server+resPath, None, headers={"User-Agent": _useragent})
+				response = urllib.request.urlopen(req)
 				with open(tempfilename, "wb") as f:
 					d = zlib.decompressobj(zlib.MAX_WBITS|32)  # gzip mode
 					m = hashlib.md5()
@@ -100,7 +100,7 @@ class ResourceCache(object):
 				os.rename(tempfilename, fullPath)
 				return
 
-			except Exception, e:
+			except Exception as e:
 				# delete the temporary file, it's probably useless anyway.
 				if os.path.exists(tempfilename):
 					os.unlink(tempfilename)

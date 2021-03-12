@@ -67,7 +67,7 @@ class FSDLiteStorage(dict):
 		return self._rowclass(self[key])
 
 	def __iter__(self):
-		return (self._rowclass(x) for x in self.itervalues())
+		return (self._rowclass(x) for x in self.values())
 
 # Warning: Code below may accidentally your whole brain.
 
@@ -89,7 +89,7 @@ class _memoize(object):
 		else:
 			# instance attribute (replaced by value)
 			value = self.method(obj)
-			setattr(obj, self.method.func_name, value)
+			setattr(obj, self.method.__name__, value)
 			return value
 
 
@@ -114,7 +114,7 @@ def _loader(attrName):
 			#return FSDLiteStorage(os.path.join(self.eve.paths.root, "bin", "staticdata", dbfilename), rowClass)
 			return FSDLiteStorage(self.eve.ResFile().resolvepath("res:/staticdata/%s" % dbfilename), rowClass)
 			
-	method.func_name = attrName
+	method.__name__ = attrName
 	return method
 
 
@@ -133,9 +133,7 @@ class _tablemgr(type):
 			setattr(cls, attrName, _memoize(_loader(attrName)))
 
 
-class Config(object):
-	__metaclass__ = _tablemgr
-
+class Config(object, metaclass=_tablemgr):
 	"""Interface to bulkdata.
 
 	EVE's database is available as attributes of instances of this class.
@@ -363,7 +361,7 @@ class Config(object):
 
 		d[1] = blue.DBRow(rd, [1, sysName, 0, None, None])
 
-		rs.lines = rs.items.values()
+		rs.lines = list(rs.items.values())
 		return rs
 
 
@@ -385,7 +383,7 @@ class Config(object):
 		_trans = self._localization.GetImportantByMessageID
 		d = rs.items
 		for fsdtable in (self.mapRegionCache, self.mapConstellationCache, self.mapSystemCache):
-			for itemID, item in fsdtable.iteritems():
+			for itemID, item in fsdtable.items():
 				c = item.center
 				d[itemID] = DBRow(rd, [itemID, _trans(item.nameID), c.x, c.y, c.z, item.nameID])
 
@@ -413,7 +411,7 @@ class Config(object):
 #			stationName = _gbl('UI/Locations/LocationNPCStationFormatter', orbitID=row["orbitID"], corporationID=row["ownerID"], operationName=operationName)
 #			d[stationID] = DBRow(rd, [stationID, stationName, row["x"], row["y"], row["z"], 0])
 
-		rs.lines = rs.items.values()
+		rs.lines = list(rs.items.values())
 
 		return rs
 
@@ -695,11 +693,11 @@ which will be called as func(current, total, tableName).
 		if debug:
 			self._debug = True
 			start = time.clock()
-			print >>sys.stderr, "LOADING STATIC DATABASE"
-			print >>sys.stderr, "  machoCachePath:", self.eve.paths.machocache
-			print >>sys.stderr, "  machoVersion:", self.eve.paths.protocol
-			print >>sys.stderr, "  bulk system path:", self.eve.paths.bulkdata
-			print >>sys.stderr, "  bulk cache path:", self.eve.paths.bulkdata_updates
+			print("LOADING STATIC DATABASE", file=sys.stderr)
+			print("  machoCachePath:", self.eve.paths.machocache, file=sys.stderr)
+			print("  machoVersion:", self.eve.paths.protocol, file=sys.stderr)
+			print("  bulk system path:", self.eve.paths.bulkdata, file=sys.stderr)
+			print("  bulk cache path:", self.eve.paths.bulkdata_updates, file=sys.stderr)
 		try:
 			if tables is None:
 				# preload everything.
@@ -723,7 +721,7 @@ which will be called as func(current, total, tableName).
 					current += 1
 
 				if debug:
-					print >>sys.stderr, "  priming:", tableName
+					print("  priming:", tableName, file=sys.stderr)
 				# now simply trigger the property's getters
 				getattr(self, tableName)
 
@@ -733,7 +731,7 @@ which will be called as func(current, total, tableName).
 
 		if debug:
 			t = time.clock() - start
-			print >>sys.stderr, "Priming took %ss (of which %.4f decoding)" % (t, self.cache._time_load)
+			print("Priming took %ss (of which %.4f decoding)" % (t, self.cache._time_load), file=sys.stderr)
 
 
 	def GetTypeVolume(self, typeID, singleton=1, qty=1):
@@ -768,7 +766,7 @@ which will be called as func(current, total, tableName).
 		"""Returns list of (requiredSkillTypeID, requiredLevel) tuples."""
 		attr = self.GetTypeAttrDict(typeID)
 		reqs = []
-		for i in xrange(1, 7):
+		for i in range(1, 7):
 			skillID = attr.get(getattr(const, "attributeRequiredSkill%s" % i), False)
 			if skillID:
 				lvl = attr.get(getattr(const, "attributeRequiredSkill%sLevel" % i), None)

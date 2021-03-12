@@ -7,7 +7,7 @@ it under the terms of the BSD license (see the file LICENSE.txt
 included with the distribution).
 """
 
-import __builtin__
+import builtins
 import sys
 from time import sleep as _sleep
 
@@ -67,7 +67,7 @@ __all__ = ["EVE", "marshal", "os", "pyos", "DBRow", "DBRowDescriptor"]
 marshal.UnmarshalError.__module__ = None
 
 # and because the exception class is accessible like this in EVE ...
-exceptions.UnmarshalError = exceptions.SQLError = __builtin__.UnmarshalError = marshal.UnmarshalError
+exceptions.UnmarshalError = exceptions.SQLError = builtins.UnmarshalError = marshal.UnmarshalError
 
 class boot:
 	role = "client"
@@ -104,7 +104,7 @@ class _ResFile(object):
 			if filename.startswith("res:"):
 				try:
 					self.fh = self.rescache.open(filename)
-				except IndexError, e:
+				except IndexError as e:
 					return None
 #			elif filename.startswith("cache:"):
 #				self.fh = open(os.path.join(self.eve.paths.root, "cache", filename[7:]), "rb") 
@@ -193,7 +193,7 @@ class EVE(object):
 		self.rescache = rescache.ResourceCache(self.paths.root, self.paths.sharedcache)
 
 		self.cfg = self.cache.getconfigmgr(self)
-		__builtin__.cfg = self.cfg
+		builtins.cfg = self.cfg
 
 		# hack to make blue.ResFile() work. This obviously means that
 		# when using multiple EVE versions, only the latest will be accessible
@@ -259,15 +259,15 @@ def _find_global(module, name):
 
 
 def _debug(*args):
-	print >>sys.stderr, args[0].Keys(), args
+	print(args[0].Keys(), args, file=sys.stderr)
 
 
 # __str__ function for DBRow objects. This is done in python because it would
 # take considerably more effort to implement in C. It's not the most efficient
 # way to display DBRows, but quite useful for debugging or inspection.
-_fmt = u"%s:%s".__mod__
+_fmt = "%s:%s".__mod__
 def dbrow_str(row):
-	return "DBRow(" + ','.join(map(_fmt, zip(row.__keys__, row))) + ")"
+	return "DBRow(" + ','.join(map(_fmt, list(zip(row.__keys__, row)))) + ")"
 _blue.dbrow_str = dbrow_str
 
 
@@ -282,5 +282,5 @@ sys.modules["blue"] = sys.modules["reverence.blue"]
 # and this one to make CCP's FSD loader import pyFSD succesfully
 sys.modules["pyFSD"] = pyFSD
 
-__builtin__.boot = boot
+builtins.boot = boot
 

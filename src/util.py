@@ -9,12 +9,12 @@ included with the distribution).
 Parts of code inspired by or based on EVE Online, with permission from CCP.
 """
 
-import __builtin__
+import builtins
 import types
 import os
 import time
 import math
-import cPickle
+import pickle
 import _weakref
 
 from . import _os
@@ -40,7 +40,7 @@ def FmtDate(blueTime):
 	return time.strftime("%Y.%m.%d %H:%M:%S", time.gmtime(sec))
 
 def FmtTimeInterval(interval, breakAt=None):
-	if interval < 10000L:
+	if interval < 10000:
 		return "a short amount of time"
 
 	year, month, wd, day, hour, min, sec, ms = _os.GetTimeParts(interval + _os.epoch_offset)
@@ -116,7 +116,7 @@ def FmtAmt(amount, fmt="ln", showFraction=0, fillWithZero=0):
 		amount = 0
 	else:
 		try:
-			long(amount)
+			int(amount)
 		except:
 			raise RuntimeError("AmountMustBeInteger", (amount))
 
@@ -126,7 +126,7 @@ def FmtAmt(amount, fmt="ln", showFraction=0, fillWithZero=0):
 	if fmt[0] == "l":
 		amount, fraction = str(float(amount)).split(".")
 		amount = amount.rjust((len(amount)+2)//3*3)
-		amount = DIGIT.join((amount[x:x+3] for x in xrange(0, len(amount), 3))).strip()
+		amount = DIGIT.join((amount[x:x+3] for x in range(0, len(amount), 3))).strip()
 		if fillWithZero:
 			fraction = fraction.ljust(showFraction, "0")
 		fraction = fraction[:showFraction]
@@ -135,18 +135,18 @@ def FmtAmt(amount, fmt="ln", showFraction=0, fillWithZero=0):
 
 	elif fmt[0] == "s":
 		if amount >= 10000:
-			order = min(len(str(long(amount)))//3*3, 12)
+			order = min(len(str(int(amount)))//3*3, 12)
 			symbol, canonical = _fmtOrder[order]
 			amount = TruncateAmt(amount, 10**order) + (symbol if (fmt[1]!="l") else canonical[str(amount)[0]!="1"])
 
 	else:
-		amount = long(amount)
+		amount = int(amount)
 
 	return sign + str(amount)
 
 
 def TruncateAmt(val, unit):
-	rest = (val % unit) / (unit/100L)
+	rest = (val % unit) / (unit/100)
 	ret = str(val / unit)
 	if rest > 0:
 		ret += DECIMAL + ('%02d' % rest).rstrip("0")
@@ -164,27 +164,27 @@ def FmtDist(dist, maxdecimals=3):
 	if dist < 1.0:
 		return TruncateDecimals(str(dist)[:5], maxdecimals) + " m"
 	if dist < 10000.0:
-		return TruncateDecimals(FmtAmt(long(dist)), maxdecimals) + " m"
+		return TruncateDecimals(FmtAmt(int(dist)), maxdecimals) + " m"
 	elif dist < 10000000000.0:
-		return TruncateDecimals(FmtAmt(long(dist/1000.0)), maxdecimals) + " km"
+		return TruncateDecimals(FmtAmt(int(dist/1000.0)), maxdecimals) + " km"
 	else:
 		dist /= 149597870700.0
 		if dist > 1000.0:
-			return TruncateDecimals(FmtAmt(long(dist)), maxdecimals) + " AU"
+			return TruncateDecimals(FmtAmt(int(dist)), maxdecimals) + " AU"
 		else:
 			return TruncateDecimals((str(dist)[:5]).replace(".", DECIMAL), maxdecimals) + " AU"
 
 
 def FmtISK(isk, showAurarAlways=1, sign=" ISK"):
 	if not showAurarAlways:
-		if long(isk) == isk:
-			return FmtAmt(long(isk)) + sign
+		if int(isk) == isk:
+			return FmtAmt(int(isk)) + sign
 	return FmtAmt(round(isk, 2), showFraction=2, fillWithZero=True) + sign
 
 
 _roman = {}
 class preproman:
-	for i in xrange(1, 40):
+	for i in range(1, 40):
 		n = i
 		result = ""
 		for (numeral, length, integer,) in (('X', 1, 10),('IX', 2, 9),('V', 1, 5),('IV', 2, 4),('I', 1, 1)):

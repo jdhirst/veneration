@@ -2,7 +2,7 @@ import types
 
 from reverence.carbon.common.script.net.GPSExceptions import *
 
-class UserError(StandardError):
+class UserError(Exception):
 	__guid__ = 'exceptions.UserError'
 
 	def __init__(self, msg=None, *args):
@@ -12,7 +12,7 @@ class UserError(StandardError):
 			self.args = (self.msg, self.dict)
 			return
 
-		if type(msg) not in [types.StringType, types.NoneType]:
+		if type(msg) not in [bytes, type(None)]:
 			raise RuntimeError("Invalid argument, msg must be a string", msg)
 
 		self.msg = msg or "<NO MESSAGE>"

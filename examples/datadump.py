@@ -59,7 +59,7 @@ def xmlstr(value):
 		raise ValueError("Unsupported type")
 	if t is str:
 		return repr(value.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;').replace("'",'&apos;'))[1:-1]
-	elif t is unicode:
+	elif t is str:
 		return repr(value.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;').replace("'",'&apos;'))[2:-1]
 	elif t == float:
 		return value
@@ -69,7 +69,7 @@ def sqlstr(x):
 	t = type(x)
 	if t in (list, tuple, dict):
 		raise ValueError("Unsupported type")
-	if t is unicode:
+	if t is str:
 		return repr(x)[1:]
 	if t is str:
 		return repr(x)
@@ -87,9 +87,9 @@ def sqlstr(x):
 #-----------------------------------------------------------------------------
 
 # see what we can pull out of the hat...
-for obj in cachedObjects.itervalues():
+for obj in cachedObjects.values():
 
-	name = filter(lambda x: x not in "()'\" ", str(obj.objectID).replace(",",".").replace('u"', "").replace("u'", ""))
+	name = [x for x in str(obj.objectID).replace(",",".").replace('u"', "").replace("u'", "") if x not in "()'\" "]
 	item = name.split(".")[-1]
 	if item.isdigit():
 		# stuff ending in numbers is pretty much irrelevant.
@@ -98,7 +98,7 @@ for obj in cachedObjects.itervalues():
 	if item.startswith("Get"):
 		item = item[3:]
 
-	print name, "...", 
+	print(name, "...", end=' ') 
 
 	thing = obj.GetObject()
 
@@ -110,18 +110,18 @@ for obj in cachedObjects.itervalues():
 		if guid.startswith("util.Row"):
 			header, lines = thing.header, thing.lines
 		elif guid.startswith("util.IndexRow"):
-			header, lines = thing.header, thing.items.values()
+			header, lines = thing.header, list(thing.items.values())
 		elif guid == "dbutil.CRowset":
 			header, lines = thing.header, thing
 		elif guid == "dbutil.CIndexedRowset":
-			header, lines = thing.header, thing.values()
+			header, lines = thing.header, list(thing.values())
 		elif guid == "util.FilterRowset":
 			header = thing.header
 			lines = []	
-			for stuff in thing.items.itervalues():  # bad way to do this.
+			for stuff in thing.items.values():  # bad way to do this.
 				lines += stuff
 		else:
-			print "UNSUPPORTED (%s)" % guid
+			print("UNSUPPORTED (%s)" % guid)
 
 	elif type(thing) == tuple:
 		if len(thing) == 2:
@@ -134,11 +134,11 @@ for obj in cachedObjects.itervalues():
 				header = row.__header__
 				lines = thing
 	else:
-		print "UNKNOWN (%s)" % type(thing)
+		print("UNKNOWN (%s)" % type(thing))
 		continue
 
 	if not header:
-		print "NO HEADER (%s)" % type(thing)
+		print("NO HEADER (%s)" % type(thing))
 		continue
 
 	if type(header) is blue.DBRowDescriptor:
@@ -169,13 +169,13 @@ for obj in cachedObjects.itervalues():
 		# dump to file
 		f2 = open( os.path.join(OUTPATH, name) + "." + MODE.lower(), "w")
 		for line in f:
-			print >>f2, line
+			print(line, file=f2)
 		del f
 		f2.close()
 
-		print "OK"
+		print("OK")
 	except:
-		print "FAILED"
+		print("FAILED")
 
 
 

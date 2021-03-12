@@ -7,14 +7,14 @@ it under the terms of the BSD license (see the file LICENSE.txt
 included with the distribution).
 """
 
-from __future__ import with_statement
+
 
 import sys
 import os
 import glob
 import platform
 import time
-import cPickle
+import pickle
 import binascii
 
 from . import config
@@ -47,7 +47,7 @@ def GetCacheFileName(key):
 	increase_refcounts(key)
 	# END UGLY HACK ------------------------------------------------------
 
-	return "%x.cache" % binascii.crc_hqx(cPickle.dumps(key), 0)
+	return "%x.cache" % binascii.crc_hqx(pickle.dumps(key), 0)
 
 
 def _readfile(filename):
@@ -147,7 +147,7 @@ class CacheMgr:
 		"""Locates and loads a cache object. will check version and contents."""
 		fileName = self.GetCacheFileName(key)
 		obj = (key, None)
-		version = (0L, 0)
+		version = (0, 0)
 		_machocache = self.machocache
 		for cacheName in [
 			_join(_machocache, "CachedObjects", fileName),

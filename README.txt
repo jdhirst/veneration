@@ -1,18 +1,16 @@
-Reverence - REVERse ENgineered Cache Explorer
+Reverence-py3 - REVERse ENgineered Cache Explorer
             
-Copyright (C)2003-2015 by Jamie "Entity" van den Berge
-All rights reserved.
+This is an updated version of the original Reverence tool developed by Jamie van den Berge. All credits go to the original author.
+
+The reason for this project is to provide Python3 and modern Wine compatibility to allow this tool to function correctly on modern systems.
 
 Reverence is an advanced EVE Online cache/bulkdata handling toolkit for Python.
-
 
 
 LICENSE
 =======
 Reverence is distributed under the terms of the BSD license
 (see the file LICENSE.txt included with the distribution).
-
-
 
 FEATURES
 ========
@@ -32,9 +30,9 @@ FEATURES
 
 REQUIREMENTS
 ============
-- Windows (XP or later) or Linux. (untested on Mac)
+- Linux
 - x86/x64 compatible processor.
-- Python 2.7 or 2.6.
+- Python 3.6 or later
 - PyYAML package
 - An EVE Online installation.
 
@@ -65,16 +63,10 @@ or erroneous data may compromise your system's security and/or stability.
 
 INSTALLATION
 ============
-Windows users can download an installer here:
-https://www.dropbox.com/sh/xd6id81qi6jo0o9/jdAjrZU2wP
-
-Linux users:
 Download the source distribution from the same location as above, extract the
 contents of the archive, cd to the project directory and run the following:
 
-   python setup.py install
-
-
+   python3 setup.py install
 
 USAGE
 =====

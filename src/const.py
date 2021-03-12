@@ -3224,7 +3224,7 @@ mapWormholeConstellationMax = 21999999
 mapWormholeSystemMin = 31000000
 mapWormholeSystemMax = 31999999
 
-skillQueueTime = 864000000000L
+skillQueueTime = 864000000000
 skillQueueMaxSkills = 50
 
 agentMissionOffered = "offered"

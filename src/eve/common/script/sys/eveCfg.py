@@ -119,7 +119,7 @@ class InvType(object):
 	def Sound(self):
 		sid = self.soundID
 		if sid is not None:
-			print cfg.sounds.keys()
+			print(list(cfg.sounds.keys()))
 			return cfg.sounds.GetIfExists(sid)
 
 	@property
@@ -263,7 +263,7 @@ class EveLocations(Row):
 			locationName = _get(self, 'locationName')
 			_cfg = cfg
 			if (not locationName) and self.locationNameID is not None:
-				if isinstance(self.locationNameID, (int, long)):
+				if isinstance(self.locationNameID, int):
 					locationName = _cfg._localization.GetByMessageID(self.locationNameID)
 				elif isinstance(self.locationNameID, tuple):
 					locationName = _cfg._localization.GetByLabel(self.locationNameID[0], **self.locationNameID[1])
@@ -398,5 +398,5 @@ class Schematic(Row):
 			return Row.__cmp__(self, other)
 
 __all__ = ["Singleton", "StackSize", "RamActivityVirtualColumn", "_OWNER_AURA_IDENTIFIER", "_OWNER_SYSTEM_IDENTIFIER", "_OWNER_NAME_OVERRIDES"]
-__all__.extend([name for name, cls in locals().items() if getattr(cls, "__guid__", False)])
+__all__.extend([name for name, cls in list(locals().items()) if getattr(cls, "__guid__", False)])
 

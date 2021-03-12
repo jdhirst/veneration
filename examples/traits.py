@@ -24,7 +24,7 @@ def striptags(text):
 	return tags.sub("", text)
 
 def printbonuses(bonusdata):
-	for bla, data in bonusdata.iteritems():
+	for bla, data in bonusdata.items():
 		if hasattr(data, 'bonus'):
 			value = round(data.bonus, 1)
 			if int(data.bonus) == data.bonus:
@@ -35,26 +35,26 @@ def printbonuses(bonusdata):
 
 		bonus, text = text.split("<t>")
 
-		print "%8s %s" % (striptags(bonus), striptags(text))
+		print("%8s %s" % (striptags(bonus), striptags(text)))
 
 
 def printtraits(typeID):
 	fsdType = cfg.fsdTypeOverrides.Get(typeID)
 	if hasattr(fsdType, 'infoBubbleTypeBonuses'):
 		typeBonuses = fsdType.infoBubbleTypeBonuses
-		for skillTypeID, skillData in typeBonuses.iteritems():
+		for skillTypeID, skillData in typeBonuses.items():
 			if skillTypeID <= 0:
 				continue
 
-			print cfg._localization.GetByLabel('UI/ShipTree/SkillNameCaption', skillName=cfg.invtypes.Get(skillTypeID).name)
+			print(cfg._localization.GetByLabel('UI/ShipTree/SkillNameCaption', skillName=cfg.invtypes.Get(skillTypeID).name))
 			printbonuses(skillData)
 
 		if ROLE_BONUS_TYPE in typeBonuses:
-			print cfg._localization.GetByLabel('UI/ShipTree/RoleBonus')
+			print(cfg._localization.GetByLabel('UI/ShipTree/RoleBonus'))
 			printbonuses(typeBonuses[ROLE_BONUS_TYPE])
 
 		elif MISC_BONUS_TYPE in typeBonuses:
-			print cfg._localization.GetByLabel('UI/ShipTree/MiscBonus')
+			print(cfg._localization.GetByLabel('UI/ShipTree/MiscBonus'))
 			printbonuses(typeBonuses[MISC_BONUS_TYPE])
 
 		return True
@@ -64,8 +64,8 @@ if __name__ == "__main__":
 	import sys
 
 	if len(sys.argv) != 2:
-		print "Usage: %s <typeName>"
-		print "Note: typeName is case sensitive!"
+		print("Usage: %s <typeName>")
+		print("Note: typeName is case sensitive!")
 		exit(1)
 
 	what = sys.argv[1]
@@ -77,9 +77,9 @@ if __name__ == "__main__":
 
 	rec = typesByName.GetIfExists(what)
 	if not rec:
-		print "No such type found: %s" % what
+		print("No such type found: %s" % what)
 		exit(1)
 
 	if not printtraits(rec.typeID):
-		print "No traits for %s" % rec.typeName
+		print("No traits for %s" % rec.typeName)
 	

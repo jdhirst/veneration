@@ -19,7 +19,7 @@ def _SHGetFolderPath(folderID):
 	if result:
 		if result < 0:
 			result += 0x100000000
-		print path_buf.value
+		print(path_buf.value)
 		raise RuntimeError("SHGetFolderPath failed, error code 0x%08x" % result)
 	return path_buf.value
 
@@ -167,11 +167,11 @@ class _Paths(object):
 
 		# find shared cache path
 		if self.sharedcache is None:
-			import _winreg
-			_winreg.aReg = _winreg.ConnectRegistry(None, _winreg.HKEY_CURRENT_USER)
+			import winreg
+			winreg.aReg = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
 			try:
-				key = _winreg.OpenKey(_winreg.aReg, 'SOFTWARE\\CCP\\EVEONLINE')
-				self.sharedcache, _ = _winreg.QueryValueEx(key, 'CACHEFOLDER')
+				key = winreg.OpenKey(winreg.aReg, 'SOFTWARE\\CCP\\EVEONLINE')
+				self.sharedcache, _ = winreg.QueryValueEx(key, 'CACHEFOLDER')
 			except OSError:
 				pass
 
@@ -258,6 +258,6 @@ class _Paths(object):
 if __name__ == "__main__":
 	paths = _Paths("G:/EVE")
 	paths._discover("tranquility", "87.237.38.200", None)
-	for k, v in paths.__dict__.iteritems():
-		print "%s = %s" % (k, v)
+	for k, v in paths.__dict__.items():
+		print("%s = %s" % (k, v))
 

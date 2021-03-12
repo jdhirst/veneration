@@ -31,8 +31,8 @@ for rec in cfg.invtypes:
 				continue
 			l = cats[g.id].append((slot, rec.name, rec))
 
-print "<html><body>"
-print "<H1><u>Entity's Nifty Implant Lookup Page</u></H1><br>"
+print("<html><body>")
+print("<H1><u>Entity's Nifty Implant Lookup Page</u></H1><br>")
 
 def mangle(s, c):
 	for d in "0123456789":
@@ -45,7 +45,7 @@ def mangle(s, c):
 
 def sortkey(s):
 	try:
-		return (s[0], mangle(s[1], ""), float(filter("0123456789.".__contains__, s[1]).strip(".")))
+		return (s[0], mangle(s[1], ""), float(list(filter("0123456789.".__contains__, s[1])).strip(".")))
 	except ValueError:
 		return s
 
@@ -72,8 +72,8 @@ def desc(rec, fltr=False):
 
 
 for groupID in sorted(cats, key=lambda id: cfg.invgroups.Get(id)):
-	print "<h2>%s</h2>" % cfg.invgroups.Get(groupID).groupName
-	print "<table>"
+	print("<h2>%s</h2>" % cfg.invgroups.Get(groupID).groupName)
+	print("<table>")
 
 	last = -1
 	lastPrefix = None
@@ -87,17 +87,17 @@ for groupID in sorted(cats, key=lambda id: cfg.invgroups.Get(id)):
 			models.reverse()
 
 			if models[0].name[-2] != " ":
-				print "<tr><td>%d</td><td><b>" % last
-				print '<a href="javascript:CCPEVE.showInfo(%d)">%s</a>' % (models[0].typeID, models[0].name),
+				print("<tr><td>%d</td><td><b>" % last)
+				print('<a href="javascript:CCPEVE.showInfo(%d)">%s</a>' % (models[0].typeID, models[0].name), end=' ')
 				if len(models)>1:
 					links = [('<a href="javascript:CCPEVE.showInfo(%d)">%s</a>' % (rec2.typeID, rec2.name.rsplit(" ", 1)[1])) for rec2 in models[1:]]
-					print " / " + " / ".join(links)
+					print(" / " + " / ".join(links))
 
-				print "</b><br>"
+				print("</b><br>")
 
-				print desc(models[0], len(models)>1)
+				print(desc(models[0], len(models)>1))
 
-				print "</td></tr>"
+				print("</td></tr>")
 
 
 			models = []
@@ -105,13 +105,13 @@ for groupID in sorted(cats, key=lambda id: cfg.invgroups.Get(id)):
 		models.append(rec)
 
 		if slot != last and last != -1:
-			print "<tr><td><br></td><td><br></td></tr>"
+			print("<tr><td><br></td><td><br></td></tr>")
 		last = slot
 
 		lastPrefix = prefix
 
-	print "<tr><td><br></td><td><br></td></tr>"
+	print("<tr><td><br></td><td><br></td></tr>")
 
-	print "</table>"
+	print("</table>")
 
-print "</body></html>"
+print("</body></html>")

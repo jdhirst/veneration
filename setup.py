@@ -1,9 +1,6 @@
 # setup.py
 import sys
 
-if sys.version_info < (2, 7) or sys.version_info >= (2, 8):
-	raise RuntimeError("Python 2.7 required")
-
 try:
 	from setuptools import setup
 	from setuptools import Extension
@@ -19,15 +16,12 @@ try:
 except OSError:
     pass
 
-
 desc = """\
 Reverence is a decoder for, and interface to the bulkdata, cache and
 settings of an EVE Online installation. It allows programmatic access
 to the game's database tables, and provides various data formatting
 functions and helpers for EVE-related applications.
 """
-
-
 
 # Collect all the subpackages for inclusion.
 p_names = []  # package names.
@@ -42,9 +36,9 @@ for path, dirs, files in os.walk("src"):
 
 
 setup(
-	name = "reverence",
+	name = "reverence-py3",
 
-	url = "http://github.com/ntt/reverence",
+	url = "http://github.com/jdhirst/reverence-py3",
 
 	version = "1.8.0",
 
@@ -56,8 +50,8 @@ setup(
 
 	classifiers = [
 		"License :: OSI Approved :: BSD License",
-		"Programming Language :: Python :: 2 :: Only",
-		"Programming Language :: Python :: 2.7",
+		"Programming Language :: Python :: 3 :: Only",
+		"Programming Language :: Python :: 3.6",
 		"Development Status :: 5 - Production/Stable",
 		"Intended Audience :: Developers",
 		"Topic :: Database",

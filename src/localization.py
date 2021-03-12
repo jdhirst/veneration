@@ -17,7 +17,7 @@ Used with permission from CCP.
 # such as names and descriptions.
 
 import os
-import cPickle
+import pickle
 import gc
 
 debug = False
@@ -83,15 +83,15 @@ class Localization(object):
 		self.cfg = cfgInstance or cfg
 
 		self._propertyHandlers = {}
-		for cls in globals().itervalues():
+		for cls in globals().values():
 			if isinstance(cls, type) and issubclass(cls, BasePropertyHandler):
 				self._propertyHandlers[cls.__id__] = cls(self, cfgInstance)
 
 		res = eve.ResFile()
 
 		def _loadlanguage(languageID):
-			x, data = cPickle.loads(res.Open("res:/localization/localization_%s.pickle" % languageID).read())
-			data.update(cPickle.loads(res.Open("res:/localizationfsd/localization_fsd_%s.pickle" % languageID).read())[1])
+			x, data = pickle.loads(res.Open("res:/localization/localization_%s.pickle" % languageID).read())
+			data.update(pickle.loads(res.Open("res:/localizationfsd/localization_fsd_%s.pickle" % languageID).read())[1])
 			return data
 
 		self.languageID = languageID
@@ -112,8 +112,8 @@ class Localization(object):
 			"res:/localization/localization_main.pickle",
 			"res:/localizationfsd/localization_fsd_main.pickle",
 		):
-			unPickledObject = cPickle.loads(res.Open(resname).read())
-			for messageID, dataRow in unPickledObject['labels'].iteritems():
+			unPickledObject = pickle.loads(res.Open(resname).read())
+			for messageID, dataRow in unPickledObject['labels'].items():
 				fp = dataRow['FullPath']
 				label = fp + '/' + dataRow['label'] if fp else dataRow['label']
 				self.languageLabels[label.encode('ascii')] = messageID
@@ -126,18 +126,18 @@ class Localization(object):
 	def _format(self, fmt, param, languageID):
 		raw, noclue, tokens = fmt
 		try:
-			for token, data in tokens.iteritems():
+			for token, data in tokens.items():
 				handler = self._propertyHandlers[data['variableType']]
 				getter = getattr(handler, data['propertyName'] or "default")
 				replacement = getter(param[data['variableName']], languageID, **data['kwargs'])
-				raw = raw.replace(token, unicode(replacement))
+				raw = raw.replace(token, str(replacement))
 		except KeyError:
 			if debug:
-				print "NO HANDLER FOR:"
-				print "- token:", token
-				print "- data:", data
-				print "- param:", param
-				print "- format:", raw
+				print("NO HANDLER FOR:")
+				print("- token:", token)
+				print("- data:", data)
+				print("- param:", param)
+				print("- format:", raw)
 			raise
 
 		return raw

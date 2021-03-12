@@ -20,7 +20,7 @@ Used with permission from CCP.
 import struct
 import collections
 import os
-import cPickle
+import pickle
 import itertools
 
 try:
@@ -28,7 +28,7 @@ try:
 except ImportError:
 	raise RuntimeError("Reverence requires the PyYAML library")
 
-import pyFSD
+from . import pyFSD
 
 from reverence import _pyFSD
 _uint32 = _pyFSD._uint32_from  # used for decoding in the various containers
@@ -45,8 +45,8 @@ FLOAT_PRECISION_DEFAULT = 'single'
 class _SchemaLoader(yaml.SafeLoader):
 	pass
 
-_SchemaLoader.add_constructor(u'tag:yaml.org,2002:map',
-	lambda loader, node: collections.OrderedDict(map(loader.construct_object, kv) for kv in node.value))
+_SchemaLoader.add_constructor('tag:yaml.org,2002:map',
+	lambda loader, node: collections.OrderedDict(list(map(loader.construct_object, kv)) for kv in node.value))
 
 def LoadSchema(f):
 	return yaml.load(f, Loader=_SchemaLoader)
@@ -56,8 +56,8 @@ def LoadEmbeddedSchema(f):
 	size = _uint32(f.read(4))
 	try:
 		# there's a possibility this blind unpickle goes spectacularly wrong.
-		return cPickle.load(f), size
-	except cPickle.UnpicklingError:
+		return pickle.load(f), size
+	except pickle.UnpicklingError:
 		# it is not a pickle, restore position in file.
 		f.seek(pos)
 		raise RuntimeError("LoadEmbeddedSchema called on file without embedded schema")
@@ -280,13 +280,13 @@ class _FixedSizeList(object):
 
 	def __iter__(self):
 		d = self.data; s = self.itemSchema; loader = self.itemSchema['loader']
-		return (loader(d, offset, s) for offset in xrange(self.offset, self.offset + self.count*self.itemSize, self.itemSize))
+		return (loader(d, offset, s) for offset in range(self.offset, self.offset + self.count*self.itemSize, self.itemSize))
 
 	def __len__(self):
 		return self.count
 
 	def __getitem__(self, idx):
-		if type(idx) not in (int, long):
+		if type(idx) not in (int, int):
 			raise TypeError('Invalid key type')
 		if idx < 0 or idx >= self.count:
 			raise IndexError('Invalid item index %i for list of length %i' % (idx, self.count))
@@ -313,13 +313,13 @@ class _VariableSizedList(object):
 	def __iter__(self):
 		d = self.data; s = self.itemSchema; loader = self.itemSchema['loader']
 		start = self.start; offset = self.offset
-		return (loader(d, start + _uint32(d, offset + idx*4), s) for idx in xrange(self.count))
+		return (loader(d, start + _uint32(d, offset + idx*4), s) for idx in range(self.count))
 
 	def __len__(self):
 		return self.count
 
 	def __getitem__(self, idx):
-		if type(idx) not in (int, long):
+		if type(idx) not in (int, int):
 			raise TypeError('Invalid key type')
 		if idx < 0 or idx >= self.count:
 			raise IndexError('Invalid item index %i for list of length %i' % (idx, self.count))
@@ -350,14 +350,14 @@ class FSD_NamedVector(object):
 			raise AttributeError(str(e))
 
 	def __repr__(self):
-		return "FSD_NamedVector(" + ",".join(map("%s:%s".__mod__, zip(self.schema['aliases'], self.data))) + ")"
+		return "FSD_NamedVector(" + ",".join(map("%s:%s".__mod__, list(zip(self.schema['aliases'], self.data)))) + ")"
 
 
 def Load_Enum(data, offset, schema):
 	dataValue = schema['unpacker'](data, offset)[0]
 	if schema['readEnumValue']:
 		return dataValue
-	for k, v in schema['values'].iteritems():
+	for k, v in schema['values'].items():
 		if v == dataValue:
 			return k
 
@@ -443,7 +443,7 @@ class FSD_Dict(object):
 		return self.loader(self.data, self.offset + v[0], self.valueSchema)
 
 	def keys(self):
-		return list(self.footer.iterkeys())
+		return list(self.footer.keys())
 
 	def iteritems(self):
 		d = self.data; a = self.offset; s = self.valueSchema; loader = s["loader"]
@@ -454,7 +454,7 @@ class FSD_Dict(object):
 		return (loader(d, a+offset, s) for offset in self.footer._iterspecial(3))
 
 	def iterkeys(self):
-		return self.footer.iterkeys()
+		return iter(self.footer.keys())
 
 	def __repr__(self):
 		return "<FSD_Dict(keys:%s,values:%s,size:%d)>" % (self.schema['keyTypes']['type'], self.valueSchema['type'], len(self.footer))
@@ -498,18 +498,18 @@ class FSD_Index(object):
 			self._getitem = self.__GetItem__
 
 	def keys(self):
-		return list(self.footer.iterkeys())
+		return list(self.footer.keys())
 
 	def iterkeys(self):
-		return self.footer.iterkeys()
+		return iter(self.footer.keys())
 
 	def iteritems(self):
 		_get = self._getitem
-		return ((key, _get(offset, size)) for key, (offset, size) in self.footer.iteritems())
+		return ((key, _get(offset, size)) for key, (offset, size) in self.footer.items())
 
 	def itervalues(self):
 		_get = self._getitem
-		return (_get(offset, size) for (offset, size) in self.footer.itervalues())
+		return (_get(offset, size) for (offset, size) in self.footer.values())
 
 	def _Search(self, key):
 		v = self.index.get(key, self)  # abusing self
@@ -599,9 +599,9 @@ class _subindex(object):
 		self._seek(offsetAndSize[0])
 		return self.loader(self._read(offsetAndSize[1]), 0, self.valueSchema)
 
-	def iterkeys(self)    : return self.offsetTable.iterkeys()
-	def itervalues(self)  : return (self[key] for key in self.offsetTable.iterkeys())
-	def iteritems(self)   : return ((key, self[key]) for key in self.offsetTable.iterkeys())
+	def iterkeys(self)    : return iter(self.offsetTable.keys())
+	def itervalues(self)  : return (self[key] for key in self.offsetTable.keys())
+	def iteritems(self)   : return ((key, self[key]) for key in self.offsetTable.keys())
 	def __len__(self)     : return len(self.offsetTable)
 	def __contains__(self): return key in self.offsetTable
 
@@ -633,8 +633,8 @@ class _indexgroup(object):
 		return default
 
 	def iterkeys(self)  : return _chain(self.indices)
-	def itervalues(self): return (v for index in self.indices for v in index.itervalues())
-	def iteritems(self) : return (kv for index in self.indices for kv in index.iteritems())
+	def itervalues(self): return (v for index in self.indices for v in index.values())
+	def iteritems(self) : return (kv for index in self.indices for kv in index.items())
 	def __len__(self)   : return sum(len(index) for index in self.indices)
 	
 	def __contains__(self, item):
@@ -663,21 +663,21 @@ class FSD_MultiIndex(FSD_Index):
 
 		# create the subindices
 		subindices = {}
-		for index, offsetAndSize in load(attributeLookupTable, 0, schema['subIndexOffsetLookup']).iteritems():
+		for index, offsetAndSize in load(attributeLookupTable, 0, schema['subIndexOffsetLookup']).items():
 			f.seek(offset + 4 + offsetAndSize.offset)
 			offsetTable = pyFSD.FsdUnsignedIntegerKeyMap()
 			offsetTable.Initialize(f.read(offsetAndSize.size), 0, True, False, offset+8)
 			subindices[index] = _subindex(f, offsetTable, schema['indexableSchemas'][index]['valueTypes'])
 
 		# assign either indexgroup or subindex to relevant attributes.
-		for indexName, indices in schema['indexNameToIds'].iteritems():
-			index = _indexgroup(map(subindices.__getitem__, indices)) if len(indices)>1 else subindices[indices[0]]
+		for indexName, indices in schema['indexNameToIds'].items():
+			index = _indexgroup(list(map(subindices.__getitem__, indices))) if len(indices)>1 else subindices[indices[0]]
 			setattr(self, indexName, index)
 
-		self._indices = schema['indexNameToIds'].keys()
+		self._indices = list(schema['indexNameToIds'].keys())
 
 	def __repr__(self):
-		indexsummary = map("%s:%d".__mod__, ((name, len(getattr(self, name))) for name in self._indices))
+		indexsummary = list(map("%s:%d".__mod__, ((name, len(getattr(self, name))) for name in self._indices)))
 		return "<FSD_MultiIndex(type:%s,size:%d,indices:{%s})>" % (self.valueSchema['type'], len(self.footer), ','.join(indexsummary))
 
 
@@ -751,7 +751,7 @@ class FSD_Object(object):
 		_getoffset = self._get_offset
 		stuff = []
 		_a = stuff.append
-		for attr, schema in header.iteritems():
+		for attr, schema in header.items():
 			offset = _getoffset(attr)
 			if offset is None:
 				v = schema.get("default", self)
@@ -760,11 +760,11 @@ class FSD_Object(object):
 				v = repr(schema['loader'](self.__data__, self.__offset__ + offset, schema))
 			_a(v)
 
-		return "FSD_Object(" + ','.join(map(u"%s:%s".__mod__, zip(header, stuff))) + ")"
+		return "FSD_Object(" + ','.join(map("%s:%s".__mod__, list(zip(header, stuff)))) + ")"
 
 	def __repr__(self):
 		# lightweight representation that doesn't decode any information
-		return "<FSD_Object(" + ','.join(map(u"%s:%s".__mod__, ((k, v['type']) for k,v in self.attributes.iteritems()) )) + ")>"
+		return "<FSD_Object(" + ','.join(map("%s:%s".__mod__, ((k, v['type']) for k,v in self.attributes.items()) )) + ")>"
 
 
 
@@ -844,7 +844,7 @@ def PrepareSchema(schema):
 		if "keyFooter" in schema:
 			PrepareSchema(schema['keyFooter'])
 		try:
-			schema['header'] = schema['valueTypes']['attributes'].keys()
+			schema['header'] = list(schema['valueTypes']['attributes'].keys())
 		except KeyError:
 			# apparently this info is gone from some fsd dicts in Rubicon
 			schema['header'] = ()
@@ -853,7 +853,7 @@ def PrepareSchema(schema):
 		if "endOfFixedSizeData" not in schema:
 			schema["endOfFixedSizeData"] = 0
 
-		for key, attrschema in schema["attributes"].iteritems():
+		for key, attrschema in schema["attributes"].items():
 			PrepareSchema(attrschema)
 			attrschema['AttributeError'] = AttributeError("Object instance does not have attribute '%s'" % key)
 			attrschema['KeyError'] = KeyError("Object instance does not have attribute '%s'" % key)
@@ -866,7 +866,7 @@ def PrepareSchema(schema):
 			schema['loader'] = _uint32
 
 	elif t == 'union':
-		for s in newSchema['optionTypes'].itervalues():
+		for s in newSchema['optionTypes'].values():
 			PrepareSchema(s)
 
 	elif t == 'float':
@@ -891,7 +891,7 @@ def PrepareSchema(schema):
 def LoadFromString(dataString, optimizedSchema=None):
 	if optimizedSchema is None:
 		size = uint32(dataString, 0)
-		optimizedSchema = cPickle.loads(dataString[4:size+4])
+		optimizedSchema = pickle.loads(dataString[4:size+4])
 		PrepareSchema(optimizedSchema)
 		return load(dataString, size+4, optimizedSchema)
 	else:

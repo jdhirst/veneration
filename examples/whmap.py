@@ -32,7 +32,7 @@ mapHeight = (HEIGHT)-(MARGIN*2)
 
 mapScaleFactor = min(mapWidth, mapHeight) / 2.0
 
-print mapWidth, mapHeight
+print(mapWidth, mapHeight)
 
 #-----------------------------------------------------------------------------
 from PIL import Image, ImageDraw, ImageFont
@@ -40,12 +40,12 @@ from reverence import blue, const
 
 import time
 
-print "Setting up EVE resources..."
+print("Setting up EVE resources...")
 
 eve = blue.EVE(EVEROOT)
 cfg = eve.getconfigmgr()
 
-print "Loading map data..."
+print("Loading map data...")
 
 f = blue.ResFile()
 f.Open("res:/UI/Shared/Maps/mapcache.dat")
@@ -54,7 +54,7 @@ mapcache = blue.marshal.Load(f.Read())
 
 # first, separate the 2 galaxies...
 
-print "Separating galaxies..."
+print("Separating galaxies...")
 
 class DecoDict(dict):
 	pass
@@ -65,7 +65,7 @@ kspace.name = "kspace"
 wspace = DecoDict()
 wspace.name = "wspace"
 
-for system in mapcache["items"].itervalues():
+for system in mapcache["items"].values():
 	if system.item.typeID != const.typeSolarSystem:
 		continue
 
@@ -74,17 +74,17 @@ for system in mapcache["items"].itervalues():
 	else:
 		wspace[system.item.itemID] = system
 
-print "- kspace has %d systems" % len(kspace)
-print "- wspace has %d systems" % len(wspace)
+print("- kspace has %d systems" % len(kspace))
+print("- wspace has %d systems" % len(wspace))
 
 # first, get galaxy widths of both galaxies!
 
-print "Measuring coordinates..."
+print("Measuring coordinates...")
 
 for galaxy in (kspace, wspace):
 	xMin = zMin = None
 	xMax = zMax = None
-	for system in galaxy.itervalues():
+	for system in galaxy.values():
 		row = system.item
 		xMin, xMax = min(row.x, xMin) if xMin else row.x, max(row.x, xMax) if xMax else row.x
 		zMin, zMax = min(row.z, zMin) if zMin else row.z, max(row.z, zMax) if zMax else row.z
@@ -95,7 +95,7 @@ for galaxy in (kspace, wspace):
 	galaxy.width = xMax - xMin
 	galaxy.height = zMax - zMin
 
-	print "- %s has dimensions (%s, %s)" % (galaxy.name, galaxy.width, galaxy.height)
+	print("- %s has dimensions (%s, %s)" % (galaxy.name, galaxy.width, galaxy.height))
 
 
 frameWidth = max(kspace.width, wspace.width)
@@ -103,10 +103,10 @@ frameHeight = max(kspace.height, wspace.height)
 
 # center the coordinates around 0,0
 
-print "Transforming coordinates..."
+print("Transforming coordinates...")
 
 for idx, galaxy in enumerate((kspace, wspace)):
-	for system in galaxy.itervalues():
+	for system in galaxy.values():
 		# translate
 		system.x = system.item.x - galaxy.xMin - (galaxy.width / 2.0)
 		system.z = system.item.z - galaxy.zMin - (galaxy.height / 2.0)
@@ -116,7 +116,7 @@ for idx, galaxy in enumerate((kspace, wspace)):
 		system.z /= frameHeight / 2.0
 
 		if max(abs(system.x), abs(system.z)) > 1:
-			print system.x, system.z
+			print(system.x, system.z)
 			raise "FRACK"
 
 		# scale
@@ -132,7 +132,7 @@ for idx, galaxy in enumerate((kspace, wspace)):
 
 s = time.time()
 
-print "Rendering map..."
+print("Rendering map...")
 
 
 #-----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ if 0:
 	line = draw.line
 	for galaxy in (kspace, wspace):
 		seen = {}
-		for itemID, system in galaxy.iteritems():
+		for itemID, system in galaxy.items():
 			row, loc, jumps = system.item, system.hierarchy, system.jumps
 
 			fromCoord = system.coords
@@ -240,7 +240,7 @@ draw.text((0,15), "The destination wormhole (K162) appears in a system of the sa
 
 # Render systems
 for galaxy in (kspace, wspace):
-	for system in galaxy.itervalues():
+	for system in galaxy.values():
 		whClass = cfg.GetLocationWormholeClass(system.hierarchy[2], system.hierarchy[1], system.hierarchy[0])
 		pix[system.coords] = classColor.get(whClass, 0xffffff)
 
@@ -250,10 +250,10 @@ for galaxy in (kspace, wspace):
 #-----------------------------------------------------------------------------
 # Save
 
-print "Render took %.2f seconds" % (time.time() - s)
+print("Render took %.2f seconds" % (time.time() - s))
 
-print "Saving image to %s..." % OUT
+print("Saving image to %s..." % OUT)
 
 img.save(OUT)
 
-print "All done"
+print("All done")

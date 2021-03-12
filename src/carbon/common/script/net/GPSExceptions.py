@@ -11,7 +11,7 @@ import types
 
 from reverence import _blue as blue
 
-class GPSException(StandardError):
+class GPSException(Exception):
 	__guid__ = 'exceptions.GPSException'
 	def __init__(self, reason):
 		self.reason = reason

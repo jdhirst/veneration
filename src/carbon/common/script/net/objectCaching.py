@@ -43,7 +43,7 @@ class CachedObject:
 	def GetCachedObject(self):
 		if self.object is None:
 			if self.pickle is None:
-				raise RuntimeError, "Wtf? no object?"
+				raise RuntimeError("Wtf? no object?")
 			if self.isCompressed:
 				self.object = blue.marshal.Load(zlib.decompress(self.pickle))
 			else:

@@ -16,7 +16,7 @@ from reverence.carbon.common.script.sys.row import Row
 
 def RowsInit(rows, columns):
 	header = None
-	if type(rows) is types.TupleType:
+	if type(rows) is tuple:
 		header = rows[0]
 		rows = rows[1]
 
@@ -55,7 +55,7 @@ class RowDict(dict):
 		if key not in self.columns:
 			raise AttributeError('Indexing key not found in columns')
 
-		vals = self.values()
+		vals = list(self.values())
 
 		self.clear()
 
@@ -112,7 +112,7 @@ class Rowset:
 		self.RowClass = rowclass
 		self.cfg = cfgInstance
 
-	def __nonzero__(self):
+	def __bool__(self):
 		return True
 
 	def __getitem__(self, index):
@@ -155,7 +155,7 @@ class Rowset:
 				for line in self.lines:
 					yield line[i]
 		else:
-			i = map(self.header.index, columns)
+			i = list(map(self.header.index, columns))
 			if options.get("line", False):
 				for line in self.lines:
 					yield line, [line[x] for x in i]
@@ -169,7 +169,7 @@ class IndexRowset(Rowset):
 
 	def __init__(self, header=None, lines=None, key=None, RowClass=Row, dict=None, cfgInstance=None, fetcher=None):
 		if not key:
-			raise ValueError, "Crap key"
+			raise ValueError("Crap key")
 
 		Rowset.__init__(self, header, lines, RowClass, cfgInstance=cfgInstance)
 
@@ -329,10 +329,10 @@ class FilterRowset:
 			return val
 
 	def keys(self):
-		return self.items.keys()
+		return list(self.items.keys())
 
 	def iterkeys(self):
-		return self.items.iterkeys()
+		return iter(self.items.keys())
 
 	def __getitem__(self, i):
 		if self.idName2:
@@ -343,11 +343,11 @@ class FilterRowset:
 		return len(self.items)
 
 	def Sort(self, colname):
-		ret = Rowset(self.header, self.items.values(), self.RowClass)
+		ret = Rowset(self.header, list(self.items.values()), self.RowClass)
 		return ret.Sort(colname)
 
 	def __iter__(self):
-		return (self[key] for key in self.iterkeys())
+		return (self[key] for key in self.keys())
 
 
 
