@@ -8,3 +8,4 @@ test/*
 build.py
 upload.py
 veneration.egg-info/*
+**/__pycache__/ 
